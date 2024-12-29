@@ -14,6 +14,7 @@ public class BlankKarel extends SuperKarel {
 	//go back to mid based on width value
 	int width;
 	int height;
+	int mid;
 	boolean evenWidthFlag;
 	boolean sameWidthHeightFlag;
 
@@ -22,55 +23,92 @@ public class BlankKarel extends SuperKarel {
 		super.run();
 
 		get_width();
+
 		System.out.println("this width : " +  this.width);
-		System.out.println("Is even : " +  this.evenWidthFlag);
-
-		go_toMiddle_From_Width();
-
-		get_height_buildColumn();
-
-		goToMidOnCol();
-
-		buildMidRow();
+		System.out.println("Is even Width : " +  this.evenWidthFlag);
 
 		goToMid();
 
-		buildMidRow();
+//		if (evenWidthFlag){
+//			createTwoColmuns();
+//		}else {
+//		}
 
+//		createOneColmuns();
+
+//		go_toMiddle_From_Width();
+//
+//		get_height_buildColumn();
+
+//		goToMidOnCol();
+////
+//		buildMidRow();
+////
+//		goToMid();
+////
+//		buildMidRow();
+//
+//		goToMid();
+//		move();
+//		turnLeft();
+
+//		while (frontIsClear()){
+//			move();
+//			putbeepers();
+//		}
+//		if (frontIsBlocked())
+//			goToMid();
+//		while (frontIsClear()){
+//			move();
+//			putbeepers();
+//		}
+
+
+	}
+
+	private void createOneColmuns() {
 		goToMid();
+//		turnRight();
+//		while (frontIsClear()){
+//			putbeepers();
+//			move();
+//		}
+	}
+
+	private void createTwoColmuns() {
+		goToMid();
+		turnRight();
+		while (frontIsClear()){
+			putbeepers();
+			move();
+		}
+		putbeepers();
+		turnRight();
 		move();
-		turnLeft();
+		turnRight();
 
 		while (frontIsClear()){
-			move();
 			putbeepers();
-		}
-		if (frontIsBlocked())
-			goToMid();
-		while (frontIsClear()){
 			move();
-			putbeepers();
 		}
-
-
 	}
 
 	void go_toMiddle_From_Width(){
 		int counter = 0;
-		int mid = 0;
+		int mid ;
 		if (!evenWidthFlag)
 			mid = (width / 2) + 1;
 		else
 			mid = width / 2;
-
+		System.out.println("Mid : "+ mid);
 		turnAround();
-		while (counter < mid){
-			move();
+		while (counter != mid){
 			counter++;
+			move();
 		}
 		turnAround();
 	}
-
+turnAround
 
 	 void get_width(){
 		int counter = 1;
@@ -84,16 +122,17 @@ public class BlankKarel extends SuperKarel {
 	}
 
 	void get_height_buildColumn(){
-		int counter = 0;
+		int counter = 1;
 		putbeepers();
 		turnLeft();
 		while (frontIsClear()){
-			move();
 			counter++;
+			move();
 			putbeepers();
 		}
 
 		this.height = counter;
+		System.out.println("Height : "+ height);
 		if (this.height == this.width)
 			sameWidthHeightFlag = true;
 	}
@@ -125,16 +164,19 @@ public class BlankKarel extends SuperKarel {
 	}
 
 	void goToMid(){
-		int counter = 1;
+		int counter = 0;
 		int mid ;
-		if (height % 2 == 0)
-			mid = height / 2;
-		else
-			mid = (height / 2) + 1;
+		if (width % 2 == 0)
+			mid = width / 2;
+		else{
+			mid = (width+1) / 2;
+			System.out.println("Width inside : " + mid);
+		}
+
+		System.out.println("Mid " + mid);
 		turnAround();
 		while (counter < mid){
 			move();
-			putbeepers();
 			counter++;
 		}
 	}
