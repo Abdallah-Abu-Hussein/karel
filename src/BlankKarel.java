@@ -5,13 +5,13 @@ public class BlankKarel extends SuperKarel {
 	// get width
 	// on the way of going back
 	// go to the middle
-	//if mid is for an even width we need to create two columns
+	//if mid is for an even width we need to create two mid columns (for even width) and two mid rows (for even height)
+	//if any of those is odd then only one colmun or row is needed
 	//if mid is odd then we need the
 	// mid = num / 2 + 1 to create four equal chambers
-
-	//beepers
-	// get width
-	//go back to mid based on width value
+	// using beepers,
+	// on the way of building columns form the mid of width get height  while building the mid columns / column
+	// while going back go to mid of the column and only create one middle row
 	int width;
 	int height;
 	int mid;
@@ -21,94 +21,86 @@ public class BlankKarel extends SuperKarel {
 	@Override
 	public void run() {
 		super.run();
-
 		get_width();
-
 		System.out.println("this width : " +  this.width);
 		System.out.println("Is even Width : " +  this.evenWidthFlag);
-
+		if (evenWidthFlag){
+			createTwoColumns();
+		}else {
+			createOneColumns();
+		}
+		if (this.height % 2 ==0){
 		goToMid();
-
-//		if (evenWidthFlag){
-//			createTwoColmuns();
-//		}else {
-//		}
-
-//		createOneColmuns();
-
-//		go_toMiddle_From_Width();
-//
-//		get_height_buildColumn();
-
-//		goToMidOnCol();
-////
-//		buildMidRow();
-////
-//		goToMid();
-////
-//		buildMidRow();
-//
-//		goToMid();
-//		move();
-//		turnLeft();
-
-//		while (frontIsClear()){
-//			move();
-//			putbeepers();
-//		}
-//		if (frontIsBlocked())
-//			goToMid();
-//		while (frontIsClear()){
-//			move();
-//			putbeepers();
-//		}
-
-
+		createTwoRows();
+		} else{
+			goToMid();
+			createOneRow();
+		}
 	}
 
-	private void createOneColmuns() {
-		goToMid();
-//		turnRight();
-//		while (frontIsClear()){
-//			putbeepers();
-//			move();
-//		}
+	private void createOneRow() {
+		turnRight();
+		int counter = 0;
+		while (counter < this.width * 2 - 2){
+			putbeepers();
+			move();
+			if(frontIsBlocked()) {
+				turnAround();
+			}
+			counter++;
+		}
 	}
 
-	private void createTwoColmuns() {
+	// Create two horizontal rows for even height
+	private void createTwoRows() {
+		createOneRow();
+		turnRight();
+		move();
+		createOneRow();
+	}
+
+	// Move to the nearest wall
+	private void moveToWall() {
+		while (frontIsClear()) {
+			move();
+		}
+	}
+
+	private void createOneColumns() {
+		int counter = 1;
 		goToMid();
+		turnRight();
+		while (frontIsClear()){
+			counter++;
+			putbeepers();
+			move();
+		}
+		putbeepers();
+		this.height = counter;
+		System.out.println("Height : "+ this.height);
+	}
+
+	private void createTwoColumns() {
+		int counter = 1;
+		goToMid();
+		turnRight();
+		while (frontIsClear()){
+			counter++;
+			putbeepers();
+			move();
+		}
+		this.height = counter;
+		System.out.println("Height : "+ this.height);
+		putbeepers();
+		turnRight();
+		move();
 		turnRight();
 		while (frontIsClear()){
 			putbeepers();
 			move();
 		}
 		putbeepers();
-		turnRight();
-		move();
-		turnRight();
-
-		while (frontIsClear()){
-			putbeepers();
-			move();
-		}
 	}
-
-	void go_toMiddle_From_Width(){
-		int counter = 0;
-		int mid ;
-		if (!evenWidthFlag)
-			mid = (width / 2) + 1;
-		else
-			mid = width / 2;
-		System.out.println("Mid : "+ mid);
-		turnAround();
-		while (counter != mid){
-			counter++;
-			move();
-		}
-		turnAround();
-	}
-turnAround
 
 	 void get_width(){
 		int counter = 1;
@@ -121,26 +113,11 @@ turnAround
 			 evenWidthFlag = true;
 	}
 
-	void get_height_buildColumn(){
-		int counter = 1;
-		putbeepers();
-		turnLeft();
-		while (frontIsClear()){
-			counter++;
-			move();
-			putbeepers();
-		}
-
-		this.height = counter;
-		System.out.println("Height : "+ height);
-		if (this.height == this.width)
-			sameWidthHeightFlag = true;
-	}
-
 	void putbeepers(){
 		if (!beepersPresent())
 			putBeeper();
 	}
+
 	void goToMidOnCol(){
 		int counter = 0;
 		int mid;
@@ -156,40 +133,15 @@ turnAround
 		}
 		turnLeft();
 	}
-	void buildMidRow(){
-		while (frontIsClear()){
-			move();
-			putbeepers();
-		}
-	}
 
 	void goToMid(){
-		int counter = 0;
-		int mid ;
-		if (width % 2 == 0)
-			mid = width / 2;
-		else{
-			mid = (width+1) / 2;
-			System.out.println("Width inside : " + mid);
-		}
-
-		System.out.println("Mid " + mid);
+		moveToWall();
+		int mid = width / 2; // Midpoint for even or odd sizes
 		turnAround();
-		while (counter < mid){
+		for (int i = 0; i < mid; i++) {
 			move();
-			counter++;
 		}
+		System.out.println("The mid : " + mid);
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
