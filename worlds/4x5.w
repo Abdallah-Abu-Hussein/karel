@@ -1,4 +1,4 @@
-Dimension: (1, 8)
+Dimension: (4, 5)
 Karel: (1, 1) east
 
 BeeperBag: INFINITE
