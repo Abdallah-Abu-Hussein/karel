@@ -1,7 +1,6 @@
 import stanford.karel.SuperKarel;
 
 class Homework extends SuperKarel {
-//
     int width;
     int height;
     int movesCounter;

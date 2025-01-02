@@ -36,20 +36,21 @@ public class BlankKarel extends SuperKarel {
 
     void checkForHeightSpecialCases() {
         // if height is one special case
-        if (IsHeightOne && width > 2) {
+        if (IsHeightOne && width > 2 && width <= 8) {
             turnAround();
             fillAlternatingLineWithNeglected(width);
         }
         //height 2 special case
-        if (IsHeightTwo && width > 2 && width <= 9) {
+        if (IsHeightTwo && width > 2 && width < 8) {
             turnAround();
             fillAlternatingLine();
             turnRight();
             moveAndCount();
             turnRight();
             fillAlternatingLine();
+//            putBeeper();
         }
-        else if(IsHeightOne && width > 9){
+        else if(IsHeightOne && width > 8){
             turnAround();
             System.out.println("fill input : ");
             fillAlternatingLineWithNeglected(width);
@@ -69,12 +70,12 @@ public class BlankKarel extends SuperKarel {
         // check for width = 1 special case
         if (frontIsBlocked()) {
             set_height();
-            if (height > 2 && height < 9) {
+            if (height > 2 && height <= 8) {
                 turnAround();
                 fillAlternatingLine();
             }
             //width is one and height is n where n > 2
-            else if (width == 1 && height > 9)  {
+            else if (width == 1 && height > 8)  {
                 turnAround();
                 fillAlternatingLineWithNeglected(height);
             }

@@ -40,14 +40,19 @@ This program divides a grid into chambers using Karel the Robot. It handles spec
 - Outputs:
   - `"Width: 5"`
   - `"Height: 5"`
-  - `"Total Moves: <count>"`
-  
+
+------
+  ![](/Assests/5x5.png)
+
 ### Case 2: `1x8` Grid
 - Places alternating beepers with optimized neglected squares.
 - Outputs:
   - `"Width: 1"`
   - `"Height: 8"`
-  - `"Total Moves: <count>"`
+  
+  ----
+
+- ![](/Assests/8x1.png)
 
 
 
@@ -291,3 +296,182 @@ Handles vertical columns for even and odd widths.
 #### `goToWall`, `goToMid`, `putBeeperSafely`, and `moveAndCount`
 Utility methods to handle movement, placement, and alignment operations.
 
+
+## **1. `run` Method**
+```java
+public void run() {
+    analyzeAndBuild();
+}
+```
+**Purpose**:
+- The entry point for the program.
+- Calls the `analyzeAndBuild` method to analyze the grid and handle its division.
+
+---
+
+## **2. `analyzeAndBuild` Method**
+```java
+private void analyzeAndBuild() {
+    checkAndBuildSpecialCases();
+
+    // Here I checked for only the height special cases since I do not want
+    // to waste moves getting the full height when I can get it from building the columns
+    if (width > 2 && !IsHeightTwo && !IsHeightOne) {
+        buildFourChambers();
+    }
+    System.out.println("Height : " + height);
+    System.out.println("Total Moves : " + movesCounter);
+}
+```
+**Purpose**:
+- Analyzes the grid dimensions and handles special cases.
+- Calls `checkAndBuildSpecialCases` to handle specific conditions for width and height.
+- If the grid does not match any special cases, calls `buildFourChambers` to divide the grid into four chambers.
+
+**Details**:
+- Avoids redundant height calculations for efficiency.
+- Logs the final height and total moves made by Karel.
+
+---
+
+## **3. `checkAndBuildSpecialCases` Method**
+```java
+void checkAndBuildSpecialCases() {
+    checkForWidthSpecialCases();
+    checkForHeightSpecialCases();
+    // for one chamber case
+    if ((IsHeightOne && width == 1) ||
+        (IsHeightOne && width == 2) ||
+        (IsHeightTwo && width == 1)) {
+        System.out.println("Nothing to do");
+    }
+}
+```
+**Purpose**:
+- Handles all special cases for width and height.
+- Calls `checkForWidthSpecialCases` and `checkForHeightSpecialCases`.
+- Handles single-chamber grids where no action is needed.
+
+---
+
+## **4. `checkForWidthSpecialCases` Method**
+```java
+void checkForWidthSpecialCases() {
+    // check for width = 1 special case
+    if (frontIsBlocked()) {
+        set_height();
+        if (height > 2 && height < 9) {
+            turnAround();
+            fillAlternatingLine();
+        }
+        // width is one and height is n where n > 9
+        else if (width == 1 && height > 9)  {
+            turnAround();
+            fillAlternatingLineWithNeglected(height);
+        }
+    } else {
+        // the width is not one special case it
+        // checks if height is a special case then sets width
+        checkIfHeightIsNotOneOrTwo();
+        set_width();
+    }
+
+    // when width = 2 special case
+    if (width == 2 && !IsHeightOne) {
+        set_height();
+        if (height >= 2 && height <= 9) {
+            turnAround();
+            fillAlternatingLine();
+            turnRight();
+            moveAndCount();
+            turnRight();
+            fillAlternatingLine();
+        } else {
+            turnAround();
+            fillAlternatingLineWithNeglected(height);
+            // go to the second column
+            turnRight();
+            moveAndCount();
+            turnRight();
+            goToWall();
+            turnRight();
+            turnRight();
+            // fill the second column
+            fillAlternatingLineWithNeglected(height);
+        }
+    }
+}
+```
+**Purpose**:
+- Handles special cases for width:
+  - **Width = 1**: Places beepers in an alternating pattern or divides into chambers if the height is large.
+  - **Width = 2**: Creates two vertical columns and handles neglected squares for large heights.
+
+---
+
+## **5. `checkForHeightSpecialCases` Method**
+```java
+void checkForHeightSpecialCases() {
+    // if height is one special case
+    if (IsHeightOne && width > 2) {
+        turnAround();
+        fillAlternatingLineWithNeglected(width);
+    }
+    // height 2 special case
+    if (IsHeightTwo && width > 2 && width <= 9) {
+        turnAround();
+        fillAlternatingLine();
+        turnRight();
+        moveAndCount();
+        turnRight();
+        fillAlternatingLine();
+    } else if (IsHeightOne && width > 9) {
+        turnAround();
+        System.out.println("fill input : ");
+        fillAlternatingLineWithNeglected(width);
+
+        turnRight();
+        moveAndCount();
+        turnRight();
+        goToWall();
+        turnRight();
+        turnRight();
+
+        fillAlternatingLineWithNeglected(width);
+    }
+}
+```
+**Purpose**:
+- Handles special cases for height:
+  - **Height = 1**: Places beepers in an alternating pattern or divides into chambers if width is large.
+  - **Height = 2**: Creates two horizontal rows.
+
+---
+
+## **6. `fillAlternatingLineWithNeglected` Method**
+```java
+void fillAlternatingLineWithNeglected(int length) {
+    int chambers = 4; // used to divide the line into 4 chambers
+    int chamberSize = length / chambers; // full size of chambers combined
+
+    int counter = 0; // Tracks position
+    System.out.println("chamberSize With beepers = " + chamberSize);
+    System.out.println("The Full Size of not neglected cells = " + "
+" + "Chambers * chamberSize = " + chambers * chamberSize);
+    while (counter < length) {
+        // Place beepers in chamber boundaries or handle extra squares
+        if (counter % chamberSize == 0 || counter >= (chambers * chamberSize)) {
+            System.out.println("Placed a beeper at Counter : " + counter);
+            putBeeperSafely(); // Place a beeper at chamber boundaries or extra squares
+        }
+        // Move to the next position
+        counter++;
+        if (frontIsClear()) {
+            moveAndCount();
+        }
+    }
+}
+```
+**Purpose**:
+- Divides the line into 4 chambers and places beepers at chamber boundaries and neglected squares.
+- Handles cases where the width or height is greater than 9.
