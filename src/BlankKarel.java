@@ -253,7 +253,6 @@ public class BlankKarel extends SuperKarel {
         this.height = counter;
         if (height == 2) {
             IsHeightTwo = true;
-            return;
         }
     }
 
