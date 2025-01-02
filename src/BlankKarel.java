@@ -4,80 +4,148 @@ public class BlankKarel extends SuperKarel {
     int width;
     int height;
     int movesCounter;
-    boolean evenWidthFlag;
+    boolean IsHeightTwo;
+    boolean IsHeightOne;
 
     public void run() {
+        analyzeAndBuild();
+    }
 
-        if (frontIsBlocked())
-            width = 1 ;
-        else
-            get_width();
+    private void analyzeAndBuild() {
+        checkAndBuildSpecialCases();
 
-        System.out.println("Width : " + width);
-        if (checkIfHeightIsOne()){
-            height = 1;
-            System.out.println("Checked Height " + height);
+        // Here I checked for only the height special cases since I do not want
+        // to waste moves getting the full height when I can get it from building the columns
+        if (width > 2 && !IsHeightTwo && !IsHeightOne) {
+            buildFourChambers();
+        }
+        System.out.println("Height : " + height);
+        System.out.println("Total Moves : " + movesCounter);
+    }
+
+     void checkAndBuildSpecialCases() {
+        checkForWidthSpecialCases();
+        checkForHeightSpecialCases();
+        // for one chamber case
+        if ((IsHeightOne && width == 1) ||
+          (IsHeightOne && width == 2) ||
+          (IsHeightTwo && width == 1)) {
+            System.out.println("Nothing to do");
+        }
+    }
+
+    void checkForHeightSpecialCases() {
+        // if height is one special case
+        if (IsHeightOne && width > 2) {
+            turnAround();
+            fillAlternatingLineWithNeglected(width);
+        }
+        //height 2 special case
+        if (IsHeightTwo && width > 2 && width <= 9) {
+            turnAround();
+            fillAlternatingLine();
+            turnRight();
+            moveAndCount();
+            turnRight();
+            fillAlternatingLine();
+        }
+        else if(IsHeightOne && width > 9){
+            turnAround();
+            System.out.println("fill input : ");
+            fillAlternatingLineWithNeglected(width);
+
+            turnRight();
+            moveAndCount();
+            turnRight();
+            goToWall();
+            turnRight();
+            turnRight();
+
+            fillAlternatingLineWithNeglected(width);
+        }
+    }
+
+    void checkForWidthSpecialCases() {
+        // check for width = 1 special case
+        if (frontIsBlocked()) {
+            set_height();
+            if (height > 2 && height < 9) {
+                turnAround();
+                fillAlternatingLine();
+            }
+            //width is one and height is n where n > 2
+            else if (width == 1 && height > 9)  {
+                turnAround();
+                fillAlternatingLineWithNeglected(height);
+            }
+        } else {
+            //the width is not one special case it
+            //checks if height is a special case the
+            //then set width
+            checkIfHeightIsNotOneOrTwo();
+            set_width();
         }
 
-
-        //if width is one
-        if (width == 1) {
-            get_height();
-            if (height > 2 && height <= 9) {
+        // when width = 2 special case
+        if (width == 2 && !IsHeightOne) {
+            set_height();
+            if (height >= 2 && height <= 9) {
                 turnAround();
+                fillAlternatingLine();
+                turnRight();
+                moveAndCount();
+                turnRight();
                 fillAlternatingLine();
             } else {
                 turnAround();
                 fillAlternatingLineWithNeglected(height);
+                // go to the second column
+                turnRight();
+                moveAndCount();
+                turnRight();
+                goToWall();
+                turnRight();
+                turnRight();
+                //fill the second column
+                fillAlternatingLineWithNeglected(height);
             }
         }
-
-        // when width = 2 special case
-        if (width == 2 &&  !checkIfHeightIsOne()){
-            turnLeft();
-            fillAlternatingLine();
-            turnLeft();
-            moveAndCount();
-            turnLeft();
-            fillAlternatingLine();
-        }
-
-        // if height is one works with both odd and even
-        if (checkIfHeightIsOne()){
-            turnAround();
-            fillAlternatingLineWithNeglected(width);
-        }
-
-
-        if (width > 2 && !checkIfHeightIsOne()
-        ) {
-            buildFourChambers();
-        }
-
-        System.out.println("Total Moves : " + movesCounter);
     }
 
-    boolean checkIfHeightIsOne() {
+    void checkIfHeightIsNotOneOrTwo() {
         turnLeft();
         if (frontIsBlocked()) {
             System.out.println("Height is one ");
             turnRight();
-            return true;
+            IsHeightOne = true;
+            height = 1;
+        } else if (frontIsClear()) {
+            // move to next squar
+            moveAndCount();
+            if (frontIsBlocked()) {
+                // check blocked after moving one square, height is 2
+                IsHeightTwo = true;
+                height = 2;
+            }
+            // Turn back to return to the starting position
+            turnAround();
+            moveAndCount();
+            turnLeft();
         }
-        turnRight();
-        return false;
     }
 
+    // used when the width or height is > than 9
     void fillAlternatingLineWithNeglected(int length) {
-        int chambers = 4; // Divide the line into 4 chambers
-        int chamberSize = length / chambers; // Size of each chamber
+        int chambers = 4; // used to divide the line into 4 chambers
+        int chamberSize = length / chambers; // full Size of chambers combined
 
         int counter = 0; // Tracks position
-        boolean placeBeeper = false; // Start without placing a beeper
-
+        System.out.println("chamberSize With beepers = " + chamberSize);
+        System.out.println("The Full Size of not neglected cells = "+"\n"+"Chambers * chamberSize = " + chambers*chamberSize);
         while (counter < length) {
             // Place beepers in chamber boundaries or handle extra squares
             if (counter % chamberSize == 0 || counter >= (chambers * chamberSize)) {
+                System.out.println("Placed a beeper at Counter : " + counter);
                 putBeeperSafely(); // Place a beeper at chamber boundaries or extra squares
             }
             // Move to the next position
@@ -88,7 +156,6 @@ public class BlankKarel extends SuperKarel {
         }
     }
 
-
     void fillAlternatingLine() {
         boolean placeBeeper = true; // Start with placing a beeper
         while (frontIsClear()) {
@@ -96,7 +163,8 @@ public class BlankKarel extends SuperKarel {
                 putBeeperSafely();
             }
             moveAndCount();
-            placeBeeper = !placeBeeper; // Alternate between placing and not placing a beeper
+            // Change between placing and not placing a beeper
+            placeBeeper = !placeBeeper;
         }
         // Place a beeper on the last position if needed
         if (placeBeeper && !beepersPresent()) {
@@ -104,16 +172,23 @@ public class BlankKarel extends SuperKarel {
         }
     }
 
-    private void get_height() {
-        int counter = 0;
-        turnLeft();
-        while (frontIsClear()) {
-            moveAndCount();
+     void set_height() {
+        checkIfHeightIsNotOneOrTwo();
+        if (!IsHeightOne && !IsHeightTwo) {
+            int counter = 0;
+            turnLeft();
+            while (frontIsClear()) {
+                moveAndCount();
+                counter++;
+            }
+            //for the last step
             counter++;
+            this.height = counter;
+            System.out.println("Height : " + height);
+        } else {
+            System.out.println("Height Special Case ! : " + height);
+
         }
-        counter++; //for the last step+
-        this.height = counter;
-        System.out.println("Height : " + height);
     }
 
     private void buildFourChambers() {
@@ -122,9 +197,9 @@ public class BlankKarel extends SuperKarel {
             createTwoColumns();
         } else {
             goToMid(width);
-            createOneColumns();
+            createOneColumn();
         }
-        if (this.height % 2 == 0) {
+        if (this.height != 2 && this.height % 2 == 0) {
             goToMid(height);
             turnLeft();
             goToWall();
@@ -142,7 +217,7 @@ public class BlankKarel extends SuperKarel {
 
     private void createOneRow() {
         int counter = 1;
-        while (counter < this.width ) {
+        while (counter < this.width) {
             putBeeperSafely();
             moveAndCount();
             if (frontIsBlocked()) {
@@ -166,35 +241,46 @@ public class BlankKarel extends SuperKarel {
         putBeeperSafely();
     }
 
-//    // Move to the nearest wall
-//    private void moveToWall() {
-//        while (frontIsClear()) {
-//            moveAndCount();
-//        }
-//    }
-
-    private void createOneColumns() {
+    private void createOneColumn() {
         int counter = 1;
         turnRight();
-        if (frontIsBlocked()) {
-            heightSpecialCase();
-        }
-        else {
-            while (frontIsClear()){
-                counter++;
-                putBeeperSafely();
-                moveAndCount();
-            }
+        while (frontIsClear() & height != 2) {
+            counter++;
             putBeeperSafely();
-            this.height = counter;
-            System.out.println("Height : "+ this.height);
+            moveAndCount();
+        }
+        putBeeperSafely();
+        this.height = counter;
+        if (height == 2) {
+            IsHeightTwo = true;
+            return;
+        }
+    }
+
+    private void createTwoColumns() {
+        int counter = 1;
+        turnRight();
+        while (frontIsClear()) {
+            counter++;
+            putBeeperSafely();
+            moveAndCount();
         }
 
+        this.height = counter;
+        if (height == 2)
+            IsHeightTwo = true;
+        System.out.println("Height : " + this.height);
+        putBeeperSafely();
+        turnRight();
+        moveAndCount();
+        turnRight();
+        while (frontIsClear()) {
+            putBeeperSafely();
+            moveAndCount();
+        }
+        putBeeperSafely();
     }
 
-    private void heightSpecialCase() {
-        goToWall();
-    }
 
     void goToWall() {
         while (frontIsClear()) {
@@ -202,33 +288,7 @@ public class BlankKarel extends SuperKarel {
         }
     }
 
-    private void createTwoColumns() {
-        int counter = 1;
-        turnRight();
-        if (frontIsBlocked()) {
-            heightSpecialCase();
-        } else {
-            while (frontIsClear()) {
-                counter++;
-                putBeeperSafely();
-                moveAndCount();
-            }
-            this.height = counter;
-            System.out.println("Height : " + this.height);
-            putBeeperSafely();
-            turnRight();
-            moveAndCount();
-            turnRight();
-            while (frontIsClear()) {
-                putBeeperSafely();
-                moveAndCount();
-            }
-            putBeeperSafely();
-        }
-
-    }
-
-    void get_width() {
+    void set_width() {
         int counter = 1;
         while (frontIsClear()) {
             move();
@@ -236,8 +296,7 @@ public class BlankKarel extends SuperKarel {
         }
         this.width = counter;
         System.out.println("Width : " + width);
-        if (width % 2 == 0)
-            evenWidthFlag = true;
+
     }
 
     void putBeeperSafely() {
@@ -250,6 +309,7 @@ public class BlankKarel extends SuperKarel {
         movesCounter++;
 
     }
+
     void goToMid(int size) {
         if (size % 2 == 0) {
             // For even sizes
