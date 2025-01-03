@@ -1,9 +1,10 @@
 # Karel Chamber Division
-- [Video Link](https://www.youtube.com/watch?v=U578DAnIVOI)
+- [Video Link]( https://youtu.be/1s-ANbRO8d8)
 - [Report Link](/Assests/Karel_Chamber_Division_Documentation.pdf)
 - [Homework.java](/src/Homework.java)
 
-# Note Ensure To Restart The Program for Each Map
+
+# Note To ensure Correct resluts restart The Program for Each Map
 
 ## Description
 This program divides a grid into chambers using Karel the Robot. It handles special cases for grids with unusual dimensions (e.g., height = 1 or 2) while minimizing movement and beeper placement.
