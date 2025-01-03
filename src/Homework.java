@@ -1,6 +1,6 @@
-import stanford.karel.SuperKarel;
+import stanford.karel.*;
 
-class Homework extends SuperKarel {
+public class Homework extends SuperKarel {
     int width;
     int height;
     int movesCounter;
@@ -23,25 +23,29 @@ class Homework extends SuperKarel {
         System.out.println("Total Moves : " + movesCounter);
     }
 
-     void checkAndBuildSpecialCases() {
+    void checkAndBuildSpecialCases() {
         checkForWidthSpecialCases();
         checkForHeightSpecialCases();
         // for one chamber case
         if ((IsHeightOne && width == 1) ||
-          (IsHeightOne && width == 2) ||
-          (IsHeightTwo && width == 1)) {
+                (IsHeightOne && width == 2) ||
+                (IsHeightTwo && width == 1)) {
             System.out.println("Nothing to do");
         }
     }
 
     void checkForHeightSpecialCases() {
         // if height is one special case
-        if (IsHeightOne && width > 2) {
+        if (IsHeightOne && width > 2 && width <= 8) {
+            turnAround();
+            fillAlternatingLine();
+        }
+        else if(IsHeightOne && width > 8){
             turnAround();
             fillAlternatingLineWithNeglected(width);
         }
         //height 2 special case
-        if (IsHeightTwo && width > 2 && width <= 9) {
+        else if (IsHeightTwo && width > 2 && width < 8) {
             turnAround();
             fillAlternatingLine();
             turnRight();
@@ -49,11 +53,12 @@ class Homework extends SuperKarel {
             turnRight();
             fillAlternatingLine();
         }
-        else if(IsHeightOne && width > 9){
+
+        else if (IsHeightTwo && width > 8) {
             turnAround();
-            System.out.println("fill input : ");
             fillAlternatingLineWithNeglected(width);
 
+            // go to the second column
             turnRight();
             moveAndCount();
             turnRight();
@@ -63,18 +68,19 @@ class Homework extends SuperKarel {
 
             fillAlternatingLineWithNeglected(width);
         }
+
     }
 
     void checkForWidthSpecialCases() {
         // check for width = 1 special case
         if (frontIsBlocked()) {
             set_height();
-            if (height > 2 && height < 9) {
+            if (height > 2 && height <= 8) {
                 turnAround();
                 fillAlternatingLine();
             }
             //width is one and height is n where n > 2
-            else if (width == 1 && height > 9)  {
+            else if (frontIsBlocked() && height > 8)  {
                 turnAround();
                 fillAlternatingLineWithNeglected(height);
             }
@@ -172,7 +178,7 @@ class Homework extends SuperKarel {
         }
     }
 
-     void set_height() {
+    void set_height() {
         checkIfHeightIsNotOneOrTwo();
         if (!IsHeightOne && !IsHeightTwo) {
             int counter = 0;
@@ -199,7 +205,7 @@ class Homework extends SuperKarel {
             goToMid(width);
             createOneColumn();
         }
-        if (this.height != 2 && this.height % 2 == 0) {
+        if (!IsHeightTwo && this.height % 2 == 0) {
             goToMid(height);
             turnLeft();
             goToWall();
@@ -329,3 +335,4 @@ class Homework extends SuperKarel {
         }
     }
 }
+

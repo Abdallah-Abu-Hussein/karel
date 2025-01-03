@@ -2,6 +2,9 @@
 - [Video Link](https://www.youtube.com/watch?v=U578DAnIVOI)
 - [Report Link](/Assests/Karel_Chamber_Division_Documentation.pdf)
 - [Homework.java](/src/Homework.java)
+
+# Note Ensure To Restart The Program for Each Map
+
 ## Description
 This program divides a grid into chambers using Karel the Robot. It handles special cases for grids with unusual dimensions (e.g., height = 1 or 2) while minimizing movement and beeper placement.
 
@@ -54,6 +57,33 @@ This program divides a grid into chambers using Karel the Robot. It handles spec
 
 - ![](/Assests/8x1.png)
 
+### Case 3: `10x10` Grid 
+
+- ![](/Assests/10x10.png)
+
+### Case 4: `9x9` Grid 
+
+- ![](/Assests/9x9.png)
+
+### Case 5: `5x2` Grid 
+
+- ![](/Assests/5x2.png)
+
+### Case 6: `2x2` Grid 
+
+- ![](/Assests/2x2.png)
+
+### Case 7: `6x5` Grid
+
+- ![](/Assests/6x5.png)
+
+### Case 8: `1x17` Grid
+
+- ![](/Assests/17x1.png)
+
+
+### Case 9: `2x15` Grid
+![](/Assests/2x15.png)
 
 
 ## **Code Breakdown**
